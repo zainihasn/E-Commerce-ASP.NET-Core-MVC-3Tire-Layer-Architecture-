@@ -1,0 +1,265 @@
+﻿@using BusinessLogicLayer.DTOs
+@using E_comm.ViewModels
+
+@model CategoryProductViewModelHome
+
+@{
+    ViewData["Title"] = "الرئيسية";
+}
+
+<div class="container">
+
+    <!-- قسم المنتجات الأكثر مبيعًا -->
+    @if (Model.TopSellingProducts != null && Model.TopSellingProducts.Any())
+    {
+            <h2 class="text-center my-4 text-primary">أكثر المنتجات مبيعًا</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4  ">
+            @foreach (var productItem in Model.TopSellingProducts)
+
+            {
+               
+               
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm product-card">
+                                 @if(productItem.Images!=null){
+                     var firstImage = productItem.Images.ImageUrl;
+                          <img src="~/Images/@firstImage "class="card-img-top" >
+                }else {
+                         <img src="~/Images/5431864737643227582 "class="card-img-top" >
+                }
+                           
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title text-truncate">@productItem.Product.ProductName</h5>
+                                    <p class="card-text text-muted small">@productItem.Product.ShortDescription</p>
+
+                                    <h4 class="text-secondary small"> @if (productItem.Product.IsActive==true)
+                            {
+                                        <span class="badge bg-success">متوفر</span>
+                            }
+                            else
+                            {
+                                        <span class="badge bg-danger">نفد</span>
+                            }</h4>
+
+                                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                                        <span class="text-success fw-bold fs-5">$@productItem.Product.Price</span>
+                                        <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                                           asp-area="" asp-controller="Product" asp-action="ProductDetails"
+                                           asp-route-ProductId="@productItem.Product.ProductId" asp-route-categoryId="@productItem.Product.CategoryId">
+                                           استكشاف
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            }
+            </div>
+    }
+
+    <!-- قسم نتائج البحث -->
+    @if (Model.SearchResults != null && Model.SearchResults.Any())
+{
+    <h2 class="text-center my-4 text-primary">نتائج البحث</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 ">
+            @foreach (var item in Model.SearchResults)
+            {
+                var product = item.Product;
+                var imageUrl = item.Images.ImageUrl ;
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm product-card">
+                            <img src="~/Images/@imageUrl" class="card-img-top" alt="@product.ProductName">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-truncate">@product.ProductName</h5>
+                                <p class="card-text text-muted small">@product.ShortDescription</p>
+
+                                <h6 class="text-secondary small">
+                                @if (product.IsActive)
+                                {
+                                            <span class="badge bg-success">متوفر</span>
+                                }
+                                else
+                                {
+                                            <span class="badge bg-danger">نفد</span>
+                                }
+                                </h6>
+
+                                <div class="mt-auto d-flex justify-content-between align-items-center">
+                                    <span class="text-success fw-bold fs-5">$@product.Price</span>
+                                    <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                                       asp-area="" asp-controller="Product" asp-action="ProductDetails"
+                                       asp-route-ProductId="@product.ProductId" asp-route-categoryId="@product.CategoryId">
+                                        استكشاف
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            }
+    </div>
+    }
+
+    else
+    {
+        @if (Model.Categories != null && Model.Categories.Any())
+        {
+         <h2 class="text-center my-4 text-primary">تصفح الفئات</h2>
+            <div class="position-relative mb-4 categories-scroll-wrapper ">
+        <button class="scroll-btn left" onclick="scrollCategories(-1)">&#8249;</button>
+
+        <div class="categories-scroll" id="categorySlider">
+                @foreach (var category in Model.Categories)
+                {
+                    <div class="category-card card border-0 shadow-sm mx-2">
+                        <img src="~/Images/@category.CategoryImageUrl" class="card-img-top" alt="@category.CategoryName">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@category.CategoryName</h5>
+                            <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                               asp-area="" asp-controller="Product" asp-action="Index"
+                               asp-route-CategoryId="@category.CategoryId">استكشاف</a>
+                        </div>
+                    </div>
+                }
+        </div>
+
+        <button class="scroll-btn right" onclick="scrollCategories(1)">&#8250;</button>
+    </div>
+             }    else {
+               <h1 class="text-center my-4 text-primary">لا توجد نتائج للبحث  </h1>
+               
+                  <a class="btn btn-lg btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                                       asp-area="" asp-controller="Home" asp-action="Index"
+                                       >
+                                        الرجوع للصفحة الرئيسية 
+                                    </a>
+                        }
+    }
+</div>
+
+<!-- Styles for the Product and Category Cards -->
+<style>
+    /* تصميم عام للبطاقات */
+    .product-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .category-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* صورة المنتج */
+    .card-img-top {
+        height: 220px;
+        object-fit: contain;
+        padding: 10px;
+        background: none;
+    }
+
+    /* نص المنتج */
+    .card-title {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    /* زر "استكشاف" */
+    .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+ .categories-scroll-wrapper {
+    overflow: hidden;
+    position: relative;
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.categories-scroll {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* حركة ناعمة */
+    will-change: transform;
+}
+
+.category-card {
+    min-width: 250px;
+    max-width: 250px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border: none;
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.scroll-btn:hover {
+    background-color: #ddd;
+}
+
+.scroll-btn.left {
+    left: -10px;
+}
+
+.scroll-btn.right {
+    right: -10px;
+}
+
+    }
+    </style>
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const slider = document.getElementById('categorySlider');
+            const cardWidth = 266; // card width + margin/gap
+            const visibleCards = 4;
+            const totalCards = slider.children.length;
+            let scrollIndex = 0;
+
+            window.scrollCategories = function (direction) {
+                const maxIndex = totalCards - visibleCards;
+                scrollIndex += direction;
+
+                // التأكد من عدم تجاوز الحدود
+                if (scrollIndex < 0) scrollIndex = 0;
+                if (scrollIndex > maxIndex) scrollIndex = maxIndex;
+
+                const scrollAmount = scrollIndex * cardWidth;
+                slider.style.transform = `translateX(-${scrollAmount}px)`;
+            };
+
+            // تمرير تلقائي كل 5 ثواني (اختياري)
+            setInterval(() => {
+                if (scrollIndex < totalCards - visibleCards) {
+                    scrollIndex++;
+                } else {
+                    scrollIndex = 0;
+                }
+                const scrollAmount = scrollIndex * cardWidth;
+                slider.style.transform = `translateX(-${scrollAmount}px)`;
+            }, 5000);
+        });
+    </script>
+}

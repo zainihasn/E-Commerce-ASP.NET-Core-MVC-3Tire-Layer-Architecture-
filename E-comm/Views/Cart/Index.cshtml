@@ -1,0 +1,101 @@
+﻿@model List<BusinessLogicLayer.DTOs.CartItemDTO>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container my-5">
+    <h2 class="text-center text-primary mb-4">سلة المشتريات</h2>
+
+    @if (Model != null && Model.Any())
+    {
+            <div class="table-responsive">
+                    <table class="table table-hover align-middle table-border table-striped text-center shadow-sm bg-white ">
+                    <thead class="table-dark">
+                        <tr>
+                            <th></th>
+                            <th>اسم المنتج</th>
+                            <th>السعر</th>
+                            <th>الكمية</th>
+                            <th>الإجمالي</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model)
+                    {
+                                <tr>
+                                    <td>
+                                        <img src="~/Images/@item.ProductImages" style="width: 100px; height: auto;" class="img-thumbnail rounded" />
+                                    </td>
+                                    <td class="fw-bold">@item.ProductName</td>
+                                    <td class="text-success">@item.Price.ToString("C")</td>
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <a class="btn btn-outline-secondary btn-sm rounded-circle" asp-controller="Cart" asp-action="EditMins" asp-route-ProductId="@item.ProductId">
+                                                <i class="bi bi-dash"></i>
+                                            </a>
+                                            <span class="fw-bold">@item.Quantity</span>
+                                            <a class="btn btn-outline-secondary btn-sm rounded-circle" asp-controller="Cart" asp-action="EditPlus" asp-route-ProductId="@item.ProductId">
+                                                <i class="bi bi-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="text-dark">@item.Amount.ToString("C")</td>
+                                    <td>
+                                        <a class="btn btn-outline-danger btn-sm rounded-circle" asp-controller="Cart" asp-action="DeleteFromCart" asp-route-ProductId="@item.ProductId" onclick="return confirm('هل أنت متأكد من الحذف؟');">
+                                            <i class="bi bi-x-lg"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4 class="text-primary">الإجمالي الكلي: <span class="text-success">@Model.Sum(item => item.Price * item.Quantity).ToString("C")</span></h4>
+                <div class="d-flex gap-3">
+                    <a class="btn btn-outline-danger fw-bold px-4" asp-controller="Cart" asp-action="Clear" onclick="return confirm('هل أنت متأكد من الحذف؟');">
+                        🗑️ حذف السلة
+                    </a>
+                        <a class="btn btn-primary fw-bold px-4" asp-controller="Cart" asp-action="CheckOut">
+                        ✅ تأكيد الطلب
+                    </a>
+                </div>
+            </div>
+    }
+    else
+    {
+            <div class="alert alert-warning text-center shadow-sm">
+                🛒 سلة المشتريات فارغة حاليًا.
+            </div>
+    }
+</div>
+
+<style>
+    body {
+        /* خلفيتك الحالية تظل كما هي */
+    }
+
+    .btn {
+        border-radius: 20px;
+    }
+
+    .table thead th {
+        font-weight: bold;
+    }
+    .table-border{
+         border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+
+    .btn-outline-secondary i,
+    .btn-outline-danger i {
+        vertical-align: middle;
+    }
+</style>

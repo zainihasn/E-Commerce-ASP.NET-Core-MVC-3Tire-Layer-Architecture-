@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - E_comm</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/css/boot.css" />
+    <link rel="stylesheet" href="~/css/boot.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/E_comm.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+ 
+
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-primary bg-primary border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light" asp-area="" asp-controller="Home" asp-action="Index">E_comm</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between bg-primary">
+                    <ul class="navbar-nav flex-grow-1 ">
+                        <li class="nav-item">
+                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                             <li class="nav-item">  
+                             <a  class="nav-link text-light"  asp-area="" asp-controller="Cart" asp-action="Index" > <i class="bi bi-cart"></i>Cart</a>                              
+                        </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-light" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                الإدارة
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Home" asp-action="Index">المنتجات (Product)</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">التصنيفات (Category)</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="ProductImages" asp-action="Index">صور المنتجات</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Invoice" asp-action="Index">الفواتير (Invoice)</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">لوحة التحكم (Dashboard)</a>
+                </li>
+            </ul>
+        </li>
+                        }
+
+
+                    </ul>
+                   <form asp-area="" asp-controller="Home" asp-action="Index" method="get" class="d-flex">
+    <input type="text" name="search" class="btn-outline-light mt-2 fw-bold add-to-cart-btn " placeholder="ابحث..." value="@Context.Request.Query["search"]" />
+    <p>&nbsp</p>
+    <button type="submit" class="btn btn-sm btn-outline-light mt-2 fw-bold add-to-cart-btn">بحث</button>
+</form>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+   <footer class="bg-success text-white pt-5 pb-4">
+      
+    <div class="container text-md-left">
+        <div class="row text-md-left">
+            <!-- القسم الأول -->
+            <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 font-weight-bold text-warning">اسم المتجر</h5>
+                <p>متجر إلكتروني يوفر لك أفضل المنتجات بأفضل الأسعار وبجودة عالية.</p>
+            </div>
+
+            <!-- القسم الثاني -->
+            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 font-weight-bold text-warning">روابط سريعة</h5>
+                <p><a href="/Home/About" class="text-white" style="text-decoration: none;">حول المتجر</a></p>
+                <p><a href="/Home/Privacy" class="text-white" style="text-decoration: none;">سياسة الخصوصية</a></p>
+                <p><a href="/Home/FAQ" class="text-white" style="text-decoration: none;">الأسئلة الشائعة</a></p>
+                <p><a href="/Contact" class="text-white" style="text-decoration: none;">اتصل بنا</a></p>
+            </div>
+
+            <!-- القسم الثالث -->
+            <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 font-weight-bold text-warning">تابعنا</h5>
+                <p><a href="https://www.facebook.com" class="text-white" style="text-decoration: none;"><i class="bi bi-facebook"></i> Facebook</a></p>
+                <p><a href="https://www.instagram.com/zeen_2_2" class="text-white" style="text-decoration: none;"><i class="bi bi-instagram"></i> Instagram</a></p>
+                <p><a href="#" class="text-white" style="text-decoration: none;"><i class="bi bi-twitter-x"></i> X.com</a></p>
+                <p><a href="#" class="text-white" style="text-decoration: none;"><i class="bi bi-youtube"></i> YouTube</a></p>
+            </div>
+
+            <!-- القسم الرابع -->
+            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 font-weight-bold text-warning">تواصل معنا</h5>
+                <p><i class="fas fa-home me-3"></i> بغـداد،العـراق</p>
+                <p><i class="fas fa-envelope me-3"></i> support@yourstore.com</p>
+                <p><i class="fas fa-phone me-3"></i> +966 55 555 5555</p>
+            </div>
+        </div>
+
+        <hr class="mb-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-7 col-lg-8">         
+                <p>© 2025 - <strong class="text-warning">E_comm</strong> - zainihasn9@gmail.com جميع الحقوق محفوظة لـ      </p>
+            </div>
+            <div class="col-md-5 col-lg-4">
+                <div class="text-center text-md-right">
+                    <p> وسائل الدفع  <i class="bi bi-cash-coin"></i> <i class="bi bi-paypal"></i> <i class="bi bi-credit-card-fill"></i></p>  
+                  
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+  
+</body>
+</html>
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+</style>

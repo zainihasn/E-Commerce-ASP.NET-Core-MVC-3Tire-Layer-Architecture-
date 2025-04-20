@@ -1,0 +1,86 @@
+﻿@using BusinessLogicLayer.DTOs
+@model List<InvoiceDTO>
+
+<div class="container mt-5">
+    <div class="card shadow rounded-4">
+        <div class="card-header bg-dark text-primary rounded-top-4">
+            <h2 class="mb-0 text-center">📄 إدارة الفواتير</h2>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>رقم الفاتورة</th>
+                            <th>تاريخ الفاتورة</th>
+                            <th>اسم العميل</th>
+                            <th>إجمالي الفاتورة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var invoice in Model)
+                        {
+                                <tr>
+                                    <td class="fw-bold">@invoice.InvoiceId</td>
+                                    <td>@invoice.InvoiceDate.ToString("yyyy-MM-dd")</td>
+                                    <td>@invoice.CustomerName</td>
+                                    <td class="text-success fw-semibold">@invoice.Total.ToString("C")</td>
+                                    <td>
+                                        <div class="d-flex flex-column gap-2">
+                                                <a asp-area="Admin" asp-controller="Invoice" asp-action="Details" asp-route-id="@invoice.InvoiceId" class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn">
+                                                <i class="bi bi-receipt"></i> عرض الفاتورة
+                                            </a>
+                                            <a asp-area="Admin" asp-controller="Invoice" asp-action="OrderDetails" asp-route-orderId="@invoice.OrderId" class="btn btn-sm btn-outline-success mt-2 fw-bold add-to-cart-btn">
+                                                <i class="bi bi-box"></i> عـرض الطـلب
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    table th, table td {
+        vertical-align: middle !important;
+    }
+
+    .text-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    img.img-thumbnail {
+        border-radius: 8px;
+    }
+
+    .table thead th {
+        font-weight: bold;
+       
+    }
+    .table-border{
+         border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+       .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+</style>

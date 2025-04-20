@@ -1,0 +1,100 @@
+﻿@using E_comm.ViewModels
+@using static E_comm.Controllers.ProductController
+@model List<ProductWithImagesViewModelProduct>
+
+@{
+    ViewData["Title"] = "قائمة المنتجات";
+}
+
+<h2 class="text-center text-primary my-4">منتجاتنا</h2>
+
+<div class="container ">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4  ">
+      @foreach (var item in Model)
+{
+    var product = item.Product;
+    var firstImage = item.Images.ImageUrl;
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm product-card">
+            <img src="~/Images/@firstImage" class="card-img-top" alt="@product.ProductName">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-truncate">@product.ProductName</h5>
+                <p class="card-text text-muted small">@product.ShortDescription</p>
+
+                <h6 class="text-secondary small">
+                    @if (product.IsActive)
+                    {
+                        <span class="badge bg-success">متوفر</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">نفد</span>
+                    }
+                </h6>
+
+                <div class="mt-auto d-flex justify-content-between align-items-center">
+                    <span class="text-success fw-bold fs-5">$@product.Price</span>
+                    <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                       asp-area=""
+                       asp-controller="Product"
+                       asp-action="ProductDetails"
+                       asp-route-ProductId="@product.ProductId"
+                       asp-route-categoryId="@product.CategoryId">
+                        استكشاف
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+    </div>
+</div>
+
+<style>
+    /* تصميم عام للبطاقات */
+    .product-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: scale(1.05);
+        
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    }
+/*     .product-card:hover .card-title,
+.product-card:hover .card-text */
+ {
+    color: red !important;
+}
+
+    /* صورة المنتج */
+    .card-img-top {
+        height: 220px;
+        object-fit: contain;
+        padding: 10px;
+        background: none;
+    }
+
+    /* نص المنتج */
+    .card-title {
+        font-size: 1rem;
+        font-weight: bold;
+    }
+
+    /* زر "أضف إلى السلة" */
+    .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* الشبكة في الموبايل والكمبيوتر */
+   /*  media (max-width: 768px) {
+        .product-card:hover {
+            transform: scale(1.02);
+        }
+    } */
+</style>

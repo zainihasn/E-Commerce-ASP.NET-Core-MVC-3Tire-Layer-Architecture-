@@ -1,0 +1,102 @@
+﻿@using BusinessLogicLayer.DTOs
+@model ProductDTO
+@{
+    ViewData["Title"] = "New";
+}
+
+<form method="post">
+    <div class="border p-4 mt-4 rounded shadow-lg">
+        <h2 class="text-center text-primary mb-4">أضـف مـنتج جـديد</h2>
+
+        @if (Model != null)
+        {
+                <input type="hidden" asp-for="@Model.ProductId" />
+        }
+
+        <div class="row">
+          
+
+            <div class="col-md-6 mb-3">
+                <label for="ProductName" class="form-label">Product Name</label>
+                <input asp-for="ProductName" class="form-control" autocomplete="CategoryName" aria-required="true" />
+            </div>
+              
+            <div class="col-md-6 mb-3">
+                <label for="CategoryId" class="form-label">Category</label>
+                    @await Component.InvokeAsync("Category", new { selected = 1 })
+            </div>  
+            </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="CompanyName" class="form-label">Company Name</label>
+                <input asp-for="CompanyName" class="form-control"  />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="ShortDescription" class="form-label">Short Description</label>
+                <input asp-for="ShortDescription" class="form-control"  />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="LongDescription" class="form-label">Long Description</label>
+                 <textarea asp-for="LongDescription" class="form-control" ></textarea>
+               
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="Color" class="form-label">Color</label>
+                <input asp-for="Color" class="form-control"  />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="Size" class="form-label">Size</label>
+                <input asp-for="Size" class="form-control"  />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="Price" class="form-label">Price</label>
+                <input asp-for="Price" class="form-control"  />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="Quantity" class="form-label">Quantity</label>
+                <input asp-for="Quantity" class="form-control"   />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="Sold" class="form-label">Sold</label>
+                <input asp-for="Sold" class="form-control"  />
+            </div>
+        </div>
+        <div>
+              <label for="IsActive" class="form-label">التوفـر</label>
+              <select asp-for="IsActive" class="form-select">
+            <option value="True">متوفر</option>
+            <option value="False">غير متوفر</option>
+            </select>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class=" btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn" style="width: 150px;">Save</button>
+            <a asp-action="Index" asp-controller="Home" asp-area="Admin" class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn" style="width: 150px;">Back</a>
+        </div>
+    </div>
+</form>
+<style>
+
+  .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+
+</style>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+}

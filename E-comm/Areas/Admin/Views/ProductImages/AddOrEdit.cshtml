@@ -1,0 +1,58 @@
+﻿@using E_comm.ViewModels
+@using static E_comm.Areas.Admin.Controllers.ProductImagesController
+@model ProductImagesDetailsViewModelAdminProductImages
+@{
+    ViewData["Title"] = "New";
+}
+
+<form method="post" enctype="multipart/form-data">
+    <div class="border p-4 mt-4 rounded shadow-lg">
+        <h2 class="text-center text-primary mb-4">Add New Category</h2>
+
+        @if (Model != null && Model.imageDTO != null)
+        {
+            <input type="hidden" asp-for="imageDTO.ImageId" />
+        }
+
+        <div class="row">
+         
+            <div class="col-md-6 mb-3">
+                <input type="file" asp-for="imageDTO.ClientFile" class="form-control" onchange="Loadfile(event)" />
+                   <span asp-validation-for="imageDTO.ClientFile" class="text-primary"></span>
+                <img id="Image" src="@($"~/Images/{Model.imageDTO?.ImageUrl}")" class="img-thumbnail mt-3" style="max-width: 150px;" />
+            </div>
+
+            <div class="col-md-6 mb-3">
+                
+               @await Component.InvokeAsync("Product", new { selected = 1 })
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn" style="width: 150px;">Save</button>
+            <a asp-action="Index" asp-controller="ProductImages" asp-area="Admin" class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn" style="width: 150px;">Back</a>
+        </div>
+    </div>
+</form>
+
+<style>
+  .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        var Loadfile = function (event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var Image = document.getElementById('Image');
+                Image.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+}

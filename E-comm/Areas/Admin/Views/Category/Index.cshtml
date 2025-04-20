@@ -1,0 +1,98 @@
+﻿@using BusinessLogicLayer.DTOs
+@model List<CategoryDTO>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Category List";
+}
+
+<h1 class="text-center my-4 text-primary fw-bold">قائمة الفـئات</h1>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <a asp-area="Admin" asp-controller="Category" asp-action="AddOrEdit" class="btn btn-sm btn-outline-success mt-2 fw-bold add-to-cart-btn">
+                <i class="bi bi-plus-lg"></i> إضافة منتج
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive table-border">
+        <table class="table table-bordered  table-striped table-hover align-middle text-center shadow-sm">
+            <thead class="table-primary">
+                <tr  class="table-dark" >
+                    <th>الصورة</th>
+                    <th>الاسم</th>                  
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Category in Model)
+                {
+                        <tr class="bg-light">
+                            <td>
+                                <img src="~/Images/@Category.CategoryImageUrl" class="img-thumbnail shadow-sm" style="max-width: 100px;" />
+                            </td>
+                            <td>@Category.CategoryName</td>                        
+                                <td >
+                                <a asp-area="Admin" asp-controller="Category" asp-action="AddOrEdit" asp-route-CategoryId="@Category.CategoryId"
+                                   class="btn btn-sm btn-outline-primary mt-2 fw-bold  rounded-circle">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                      <form method="post" asp-area="Admin" asp-controller="Category" asp-action="Delete" asp-route-CategoryId="@Category.CategoryId"
+                                   
+                                   onclick="return confirm('هل أنت متأكد من الحذف؟');">
+                                       <button type="submit" class="btn btn-sm btn-outline-danger mt-2 fw-bold rounded-circle">
+                                    <i class="bi bi-x-lg"></i>
+                                 </button>
+                                    </form> 
+                           
+                            </td>
+                           
+                               
+                        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    table th, table td {
+        vertical-align: middle !important;
+    }
+
+    .text-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    img.img-thumbnail {
+        border-radius: 8px;
+    }
+
+    .table thead th {
+        font-weight: bold;
+       
+    }
+    .table-border{
+         border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+       .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+</style>

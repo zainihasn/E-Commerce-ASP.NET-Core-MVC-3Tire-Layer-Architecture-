@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>BusinessLogicLayer</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="MailKit" Version="4.11.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Stripe.net" Version="48.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="22.4.4" />
+  </ItemGroup>
+  
+  <ItemGroup>
+
+	  <ProjectReference Include="F:\algorthems_C++\E-comm\Data Access Layer\DataAccessLayer.csproj" />
+
+
+
+  </ItemGroup>
+
+</Project>

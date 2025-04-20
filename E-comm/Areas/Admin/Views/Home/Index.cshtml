@@ -1,0 +1,137 @@
+﻿@using E_comm.ViewModels
+@using static E_comm.Areas.Admin.Controllers.HomeController
+@model List<ProductDetailsViewModelHomeAdmin>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Product List";
+}
+
+<h1 class="text-center my-4 text-primary fw-bold">قائمة المنتجات</h1>
+
+<div class="container">
+    <div class="row mb-3">
+        <div class="col-12 text-end">
+            <a asp-area="Admin" asp-controller="Home" asp-action="AddOrEdit" class="btn btn-sm btn-outline-success mt-2 fw-bold add-to-cart-btn">
+                <i class="bi bi-plus-lg"></i> إضافة منتج
+            </a>
+        </div>
+    </div>
+
+    <div class="table-responsive table-border">
+        <table class="table table-bordered table-striped   table-hover align-middle text-center shadow-sm">
+            <thead class="table-primary">
+                <tr  class="table-dark" >
+                    <th>الصورة</th>
+                    <th>الاسم</th>
+                    <th>الفئة</th>
+                    <th>الشركة</th>
+                    <th>وصف قصير</th>
+                    <th>وصف طويل</th>
+                    <th>اللون</th>
+                    <th>الحجم</th>
+                    <th>السعر</th>
+                    <th>المخزون</th>
+                    <th>المباع</th>
+                    <th>الحالة</th>
+                    <th></th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                        <tr class="bg-light">
+                            @if (item.imageDTO != null)
+{
+                            <td>
+                                <img src="~/Images/@item.imageDTO.ImageUrl" class="img-thumbnail shadow-sm" style="max-width: 100px;" />
+                            </td>
+}else{
+    
+                            <td>
+                                        <img src="~/Images/5431864737643227582" class="img-thumbnail shadow-sm" style="max-width: 100px;" />
+                            </td>
+}
+                            <td>@item.Product.ProductName</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td>@item.Product.CompanyName</td>
+                            <td class="text-truncate" style="max-width: 150px;">@item.Product.ShortDescription</td>
+                            <td class="text-truncate" style="max-width: 200px;">@item.Product.LongDescription</td>
+                            <td>@item.Product.Color</td>
+                            <td>@item.Product.Size</td>
+                            <td><strong class="text-success">@item.Product.Price.ToString("C")</strong></td>
+                             <td>@item.Product.Quantity</td>
+                             <td>@item.Product.Sold</td>
+                            <td>
+                            @if (item.Product.IsActive)
+                            {
+                                        <span class="badge bg-success">متوفر</span>
+                            }
+                            else
+                            {
+                                        <span class="badge bg-danger">نفد</span>
+                            }
+                            </td>
+                            
+                            <td>
+                          
+                                <a asp-area="Admin" asp-controller="Home" asp-action="AddOrEdit" asp-route-ProductId="@item.Product.ProductId"
+                                   class="btn btn-sm btn-outline-primary mt-2 fw-bold rounded-circle">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                        <form method="post" asp-area="Admin" asp-controller="Home" asp-action="Delete" asp-route-ProductId="@item.Product.ProductId"
+
+                                       onclick="return confirm('هل أنت متأكد من الحذف؟');">
+                                           <button type="submit" class="btn btn-sm btn-outline-danger mt-2 fw-bold rounded-circle">
+                                        <i class="bi bi-x-lg"></i>
+                                     </button>
+                                        </form> 
+
+                            </td>
+                          
+                        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: none;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    table th, table td {
+        vertical-align: middle !important;
+    }
+
+    .text-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    img.img-thumbnail {
+        border-radius: 8px;
+    }
+
+    .table thead th {
+        font-weight: bold;
+       
+    }
+    .table-border{
+         border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .badge {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+    }
+       .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+</style>

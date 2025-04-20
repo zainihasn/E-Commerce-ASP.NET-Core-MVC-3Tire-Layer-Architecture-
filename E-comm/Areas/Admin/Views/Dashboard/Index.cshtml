@@ -1,0 +1,294 @@
+﻿@using BusinessLogicLayer.DTOs
+@using E_comm.ViewModels
+@model DashboardFilterViewModel
+
+@{
+    ViewData["Title"] = "لوحة التحكم";
+}
+
+<h2>لوحة التحكم (Admin Dashboard)</h2>
+
+<!-- Form for custom time range -->
+<form asp-controller="Dashboard" asp-action="Index" method="get" class="row g-3">
+    <div class="col-md-4">
+        <label for="startDate" class="form-label">تاريخ البداية</label>
+        <input type="date" class="form-control" id="startDate" name="startDate" value="@(Model.StartDate?.ToString("yyyy-MM-dd") ?? "")" />
+    </div>
+    <div class="col-md-4">
+        <label for="endDate" class="form-label">تاريخ الانتهاء</label>
+        <input type="date" class="form-control" id="endDate" name="endDate" value="@(Model.EndDate?.ToString("yyyy-MM-dd") ?? "")" />
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">عرض الإحصائيات</button>
+    </div>
+</form>
+
+<!-- Dashboard Statistic Cards -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <h5 class="card-title">عدد الطلبات</h5>
+                <p class="card-text">@Model.DashboardData.TotalOrders</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">إجمالي المبيعات</h5>
+                <p class="card-text">@Model.DashboardData.TotalSales.ToString("c")</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">عدد المبيعات</h5>
+                <p class="card-text">@Model.DashboardData.TotalUnitySold</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <h5 class="card-title">عدد المنتجات المتوفرة</h5>
+                <p class="card-text">@Model.DashboardData.AvailableProducts</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Quick Time Filters -->
+<div class="row mt-4">
+    <div class="col-md-6 text-center">
+        @{
+            var today = DateTime.Today;
+        }
+        @foreach (var range in new[] {
+            new { Days = 7, Label = "آخر 7 أيام", Class="btn-outline-primary" },
+            new { Days = 30, Label = "آخر 30 يوم", Class="btn-outline-secondary" },
+            new { Days = 180, Label = "آخر 6 أشهر", Class="btn-outline-warning" }
+        })
+        {
+            <form asp-controller="Dashboard" asp-action="Index" method="get" class="d-inline">
+                <input type="hidden" name="startDate" value="@today.AddDays(-range.Days).ToString("yyyy-MM-dd")" />
+                <input type="hidden" name="endDate" value="@today.ToString("yyyy-MM-dd")" />
+                <button type="submit" class="btn @range.Class btn-sm">@range.Label</button>
+            </form>
+        }
+
+        <form asp-controller="Dashboard" asp-action="Index" method="get" class="d-inline">
+            <input type="hidden" name="startDate" value="@{new DateTime(today.Year, 1, 1).ToString("yyyy-MM-dd");}" />
+            <input type="hidden" name="endDate" value="@today.ToString("yyyy-MM-dd")" />
+            <button type="submit" class="btn btn-outline-success btn-sm">السنة الحالية</button>
+        </form>
+    </div>
+</div>
+
+<!-- Chart Section -->
+<div class="row mt-5">
+    <div class="col-md-6">
+        <canvas id="ordersChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="salesChart"></canvas>
+    </div>
+</div>
+
+@if (Model.TopSellingProducts != null && Model.TopSellingProducts.Any())
+{
+    <h2 class="text-center my-4 text-primary">أكثر المنتجات مبيعًا</h2>
+        <div class="table-responsive table-border">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>الصورة</th>
+                    <th>اسم المنتج</th>
+                    <th>الوصف</th>
+                    <th>الحالة</th>
+                    <th>المباع</th>
+                    <th>السعر</th>
+                    <th>استكشاف</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var productItem in Model.TopSellingProducts)
+                {
+                    var firstImage = productItem.Images.ImageUrl;
+                    <tr>
+                        <td><img src="~/Images/@firstImage" alt="صورة المنتج" width="60" height="60" class="img-thumbnail" /></td>
+                        <td>@productItem.Product.ProductName</td>
+                        <td class="text-muted small">@productItem.Product.ShortDescription</td>
+                        <td>
+                            @if (productItem.Product.IsActive)
+                            {
+                                <span class="badge bg-success">متوفر</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">نفد</span>
+                            }
+                        </td>
+                         <td class="fw-bold text-success">@productItem.Product.Sold</td>
+                        <td class="fw-bold text-success">$@productItem.Product.Price</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                               asp-controller="Home" asp-action="Index"
+                               asp-route-ProductId="@productItem.Product.ProductId"
+                               asp-route-categoryId="@productItem.Product.CategoryId">
+                               استكشاف
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+@if (Model.LowStockProduct != null && Model.LowStockProduct.Any())
+{
+    <h2 class="text-center my-4 text-primary">المنتجات ذات مخزون منخفض</h2>
+        <div class="table-responsive table-border">
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-warning">
+                <tr>
+                    <th>الصورة</th>
+                    <th>اسم المنتج</th>
+                    <th>الوصف</th>
+                    <th>الحالة</th>
+                    <th>المخزون</th>
+                    <th>السعر</th>
+                    <th>استكشاف</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var productItem in Model.LowStockProduct)
+                {
+                    var firstImage = productItem.Images.ImageUrl;
+                    <tr>
+                        <td><img src="~/Images/@firstImage" alt="صورة المنتج" width="60" height="60" class="img-thumbnail" /></td>
+                        <td>@productItem.Product.ProductName</td>
+                        <td class="text-muted small">@productItem.Product.ShortDescription</td>
+                        <td>
+                            @if (productItem.Product.IsActive)
+                            {
+                                <span class="badge bg-success">متوفر</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">نفد</span>
+                            }
+                        </td>
+                        <td class="fw-bold text-success">@productItem.Product.Quantity</td>
+                        <td class="fw-bold text-success">$@productItem.Product.Price</td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"
+                               asp-controller="Home" asp-action="Index"
+                               asp-route-ProductId="@productItem.Product.ProductId"
+                               asp-route-categoryId="@productItem.Product.CategoryId">
+                               استكشاف
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+<!-- Chart.js Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = @Html.Raw(Json.Serialize(Model.DashboardData.Labels));
+
+    new Chart(document.getElementById('ordersChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'عدد الطلبات في الفترة المحددة',
+                data: @Html.Raw(Json.Serialize(Model.DashboardData.OrdersData)),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'عدد الطلبات خلال الفترة'
+                }
+            },
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    new Chart(document.getElementById('salesChart'), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'إجمالي المبيعات في الفترة المحددة',
+                data: @Html.Raw(Json.Serialize(Model.DashboardData.SalesData)),
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 2,
+                tension: 0.4
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'إجمالي المبيعات خلال الفترة'
+                }
+            },
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+
+<!-- Custom Style -->
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+       .table-border{
+         border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .text-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+
+    .card-body {
+        font-size: 1rem;
+    }
+</style>

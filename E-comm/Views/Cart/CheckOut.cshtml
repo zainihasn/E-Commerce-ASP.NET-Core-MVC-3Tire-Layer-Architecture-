@@ -1,0 +1,164 @@
+﻿@using E_comm.ViewModels
+@using static E_comm.Controllers.CartController
+@model ProductDetailsViewModelCartItems
+
+<input type="hidden" id="orderAmount" value="@Model.TotalAmount" />
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4">💳 الدفع </h2>
+
+    <form method="post" class="shadow p-4 rounded bg-light" id="checkoutForm">
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <h4 class="mb-3 text-primary">معلومات الضيف</h4>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">الاسم الكامل</label>
+                    <input asp-for="GuestInfoDTO.FullName" class="form-control" placeholder="أدخل اسمك الكامل" />
+                    <span asp-validation-for="GuestInfoDTO.FullName" class="text-primary"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">البريد الإلكتروني</label>
+                    <input asp-for="GuestInfoDTO.Email" class="form-control" placeholder="example@email.com" />
+                    <span asp-validation-for="GuestInfoDTO.Email" class="text-primary"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">رقم الهاتف</label>
+                    <input asp-for="GuestInfoDTO.PhoneNumber" class="form-control" placeholder="05XXXXXXXX" />
+                    <span asp-validation-for="GuestInfoDTO.PhoneNumber" class="text-primary"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">العنوان</label>
+                    <textarea asp-for="GuestInfoDTO.Address" class="form-control" placeholder="المدينة، الشارع، رقم المبنى"></textarea>
+                    <span asp-validation-for="GuestInfoDTO.Address" class="text-primary"></span>
+                </div>
+            </div>
+        }
+        <hr />
+        <h4 class="mb-3 text-primary">طريقة الدفع</h4>
+
+        <div class="mb-4">
+            <label asp-for="PaymentDTO.CardName" class="form-label">اختر وسيلة الدفع</label>
+            @await Component.InvokeAsync("PaymentMethod", new { selected = 1 })
+         
+        </div>
+
+        <div id="card-element" class="form-control mb-3" style="display: none;"></div>
+        <div id="card-errors" class="text-danger mb-3"></div>
+        <div id="paypal-button-container" class="mt-4" style="display: none;"></div>
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn" id="standardSubmit">
+                🛒 إتمام الطلب
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }
+</style>
+
+@section Scripts {
+        <script src="https://js.stripe.com/v3/"></script>
+        <partial name="_ValidationScriptsPartial" />
+
+        <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=USD"></script>
+
+        <script>
+            const stripe = Stripe("pk_test_XXXX");
+            const elements = stripe.elements();
+            const card = elements.create('card');
+            const cardElement = document.getElementById("card-element");
+            const form = document.getElementById("checkoutForm");
+            const paymentSelect = document.getElementById("paymentMethod");
+
+            paymentSelect.addEventListener("change", function () {
+                const method = this.value;
+                if (method === "1" || method === "2") {
+                    cardElement.style.display = "block";
+                    card.mount("#card-element");
+                } else {
+                    cardElement.style.display = "none";
+                    card.unmount();
+                }
+
+                if (method === "3") {
+                    document.getElementById("paypal-button-container").style.display = "block";
+                    document.getElementById("standardSubmit").style.display = "none";
+                } else {
+                    document.getElementById("paypal-button-container").style.display = "none";
+                    document.getElementById("standardSubmit").style.display = "block";
+                }
+            });
+
+            form.addEventListener("submit", async function (e) {
+                const selectedMethod = paymentSelect.value;
+
+                if (selectedMethod === "1" || selectedMethod === "2") {
+                    e.preventDefault();
+
+                    const { token, error } = await stripe.createToken(card);
+                    if (error) {
+                        document.getElementById("card-errors").textContent = error.message;
+                        return;
+                    }
+
+                    const hiddenInput = document.createElement("input");
+                    hiddenInput.setAttribute("type", "hidden");
+                    hiddenInput.setAttribute("name", "cardToken");
+                    hiddenInput.setAttribute("value", token.id);
+                    form.appendChild(hiddenInput);
+
+                    form.submit();
+                }
+            });
+
+            const orderAmount = document.getElementById("orderAmount").value;
+
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: orderAmount
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        alert('✅ تم الدفع بنجاح بواسطة: ' + details.payer.name.given_name);
+                        fetch('/Payment/VerifyPayPalPayment', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                orderId: data.orderID,
+                                payerId: data.payerID
+                            })
+                        }).then(response => {
+                            if (response.ok) {
+                                window.location.href = '/Order/Success';
+                            } else {
+                                alert('⚠️ فشل في تأكيد الطلب.');
+                            }
+                        });
+                    });
+                },
+                onError: function (err) {
+                    console.error("❌ خطأ في PayPal:", err);
+                    alert("حدث خطأ في عملية الدفع عبر PayPal.");
+                }
+            }).render('#paypal-button-container');
+        </script>
+}

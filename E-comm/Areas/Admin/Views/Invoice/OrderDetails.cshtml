@@ -1,0 +1,59 @@
+﻿@using E_comm.ViewModels
+@model OrderDetailsViewModel
+
+@if (Model != null)
+{
+    <div class="container my-4">
+        <h1 class="text-center">تفاصيل الطلب رقم @Model.Order.OrderId</h1>
+        <hr />
+
+        <h2>تفاصيل الطلب</h2>
+        <p><strong>تاريخ الطلب:</strong> @Model.Order.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+        <p><strong>حالة الطلب:</strong> @(Model.Order.Status == 1 ? "مكتمل" : Model.Order.Status == 2 ? "قيد المعالجة" : "مؤجل")</p>
+        <p><strong>حالة الإلغاء:</strong> @(Model.Order.IsCancel ? "ملغى" : "مستمر")</p>
+
+        <!-- معلومات العميل أو الضيف -->
+        @if (Model.GuestInfo != null)
+        {
+            <p><strong>معلومات العميل:</strong> @Model.GuestInfo.FullName</p>
+            <p><strong>البريد الإلكتروني للعميل:</strong> @Model.GuestInfo.Email</p>
+        }
+        else
+        {
+            <p><strong>معلومات العميل:</strong> تم إجراء الطلب كـ "زائر"</p>
+        }
+
+        <h3 class="mt-4">تفاصيل الدفع</h3>
+        <p><strong>رقم الدفع:</strong> @Model.Payment.CardName</p>
+      
+
+        <h3 class="mt-4">العناصر في الطلب:</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>اسم المنتج</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>@item.Product.ProductName</td>
+                    <td>@item.OrderItem.Quantity</td>
+                    <td>@item.OrderItem.Price.ToString("C")</td>
+                    <td>@item.TotalAmount.ToString("C")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    
+    </div>
+}
+else
+{
+    <p>لم يتم العثور على الطلب.</p>
+}

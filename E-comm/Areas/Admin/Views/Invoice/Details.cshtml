@@ -1,0 +1,52 @@
+﻿
+@using E_comm.ViewModels
+@model InvoiceDetailsViewModel
+
+@if (Model != null && Model.Invoice != null)
+{
+    <div class="container my-4">
+        <h1 class="text-center">فاتورة الشراء</h1>
+        <hr />
+
+        <h2>تفاصيل الفاتورة رقم @Model.Invoice.InvoiceId</h2>
+
+        <p><strong>رقم الطلب:</strong> @Model.Invoice.OrderId</p>
+        <p><strong>اسم العميل:</strong> @Model.Invoice.CustomerName</p>
+        <p><strong>البريد الإلكتروني:</strong> @Model.Invoice.CustomerEmail</p>
+        <p><strong>رقم الهاتف:</strong> @Model.Invoice.CustomerPhone</p>
+        <p><strong>العنوان:</strong> @Model.Invoice.Address</p>
+        <p><strong>طريقة الدفع:</strong> @Model.Invoice.PaymentMethod</p>
+        <p><strong>تاريخ الفاتورة:</strong> @Model.Invoice.InvoiceDate.ToString("yyyy-MM-dd")</p>
+
+        <h3 class="mt-4">تفاصيل العناصر في الفاتورة:</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>اسم المنتج</th>
+                    <th>الكمية</th>
+                    <th>سعر الوحدة</th>
+                    <th>الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Product?.ProductName</td>
+                        <td>@item.InvoiceItem.Quantity</td>
+                        <td>@item.InvoiceItem.UnitPrice.ToString("C")</td>
+                        <td>@item.InvoiceItem.Amount.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h4>المجموع الفرعي: @Model.Invoice.SubTotal.ToString("C")</h4>
+        <h4>الضريبة: @Model.Invoice.Tax.ToString("C")</h4>
+        <h3><strong>الإجمالي الكلي: @Model.Invoice.Total.ToString("C")</strong></h3>
+    </div>
+}
+else
+{
+    <p>لم يتم العثور على الفاتورة.</p>
+}

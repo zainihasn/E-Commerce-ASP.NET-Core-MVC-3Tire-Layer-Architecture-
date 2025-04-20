@@ -1,0 +1,8 @@
+﻿@model Microsoft.AspNetCore.Mvc.Rendering.SelectList
+
+<select name="imageDTO.ProductId" class="form-control">
+    @foreach (var item in Model)
+    {
+            <option value="@item.Value">@item.Text</option>
+    }
+</select>

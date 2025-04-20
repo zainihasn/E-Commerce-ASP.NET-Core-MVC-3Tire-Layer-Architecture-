@@ -1,0 +1,61 @@
+﻿
+@model string
+
+@{
+  
+}
+<div>
+    @Html.Raw(Model)
+</div>
+<div>
+ <a  class="btn btn-sm btn-outline-primary mt-2 fw-bold add-to-cart-btn"  asp-area="" asp-controller="Home" asp-action="Index" > Back to Products  </a> 
+ </div>
+ <style>
+   .add-to-cart-btn {
+        border-radius: 20px;
+        padding: 5px 12px;
+        font-size: 0.9rem;
+    }</style> 
+@* @model List<BusinessLogicLayer.DTOs.CartItemDTO>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+<h1> Order Confirmed, Thank You For Shopping    </h1>
+
+@if (Model != null && Model.Any())
+{
+        <table class="table">
+            <thead>
+                <tr>
+                       <th></th>
+                    <th>Product Name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                 
+
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                        <tr>
+                            <td>  <img src="~/Images/@item.ProductImages "style="width: 100px; height: auto;" ></td>
+                            <td>@item.ProductName</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@item.Quantity</td>
+                            <td>@(item.Amount)</td>
+                           
+                        </tr>
+            }
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end">
+            <h4>Total: @Model.Sum(item => item.Price * item.Quantity).ToString("C")</h4>
+        </div>
+
+}
+
+*@
