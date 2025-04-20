@@ -24,10 +24,13 @@ An advanced e-commerce web application built with ASP.NET Core MVC following SOL
 ## 🔧 Technologies Used
 
 - ASP.NET Core MVC  
-- Entity Framework Core  
-- SQL Server  
-- AutoMapper  
+- Entity Framework Core
+- Service-Oriented Architecture (SOA)
+- AutoMapper
 - Stripe & PayPal API  
+- Repository Pattern
+- Unit of Work Pattern  
+- SQL Server 
 - Bootstrap 5 + jQuery
 
 ---
