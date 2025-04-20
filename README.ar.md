@@ -24,10 +24,13 @@
 ## 🔧 التقنيات المستخدمة
 
 - ASP.NET Core MVC  
-- Entity Framework Core  
-- SQL Server  
-- AutoMapper  
-- Stripe, PayPal API  
+- Entity Framework Core
+- Service-Oriented Architecture (SOA)
+- AutoMapper
+- Stripe & PayPal API  
+- Repository Pattern
+- Unit of Work Pattern  
+- SQL Server 
 - Bootstrap 5 + jQuery
 
 ---
